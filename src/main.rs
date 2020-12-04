@@ -15,22 +15,42 @@
 // This example demonstrates clap's "usage strings" method of creating arguments
 // which is less verbose
 use clap::{Arg, App};
+use std::io::{self, Read};
+use edit;
 
 fn main() {
     let matches = App::new("DotRush")
         .version("1.0")
         .author("PerseoGI. <perseo.gi98@gmail.com>")
         .about("Manage dotfiles on your git repository")
-        .arg("-c, --config=[FILE] 'Sets a custom config file'")
-        .arg("<INPUT>              'Sets the input file to use'")
-        .arg("-v...                'Sets the level of verbosity'")
+        .subcommand(App::new("init"))
+            .about("start dotfile configuration process")
+            .version("1.0")
 
-        .subcommand(App::new("test")
-            .about("controls testing features")
-            .version("1.3")
-            .author("Someone E. <someone_else@other.com>")
-            .arg("-d, --debug 'Print debug information'"))
         .get_matches();
 
-    // Same as previous example...
+
+    if let Some(ref matches) = matches.subcommand_matches("init") {
+        println!("Starting dotrush configuration");
+
+        println!("Type your Git");
+        let mut username = String::new();
+        match io::stdin().read_line(&mut username){
+            Ok(n) => {
+                println!("Okey {}", username);
+            }
+            Err(error) => println!("error {}", error)
+        }
+
+        let template = "Fill in the blank: Hello, _____!";
+        let edited = edit::edit(template);
+        println!("after editing: '{:?}'", edited);
+
+        // "$ myapp test" was run
+        if matches.is_present("list") {
+            // "$ myapp test -l" was run
+            println!("Printing testing lists...");
+        } else {
+        }
+    }
 }
